@@ -1,0 +1,79 @@
+name: Publish polished Murashki site
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-polished-site.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download polished pages
+        run: |
+          curl -L --fail 'https://at.adobe.com/lIbkDX7jQYpvC8Bs' -o index.html
+          curl -L --fail 'https://at.adobe.com/heuhvO80EsyiP5ub' -o privacy.html
+
+      - name: Finish mobile and privacy details
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index = Path('index.html')
+          text = index.read_text()
+
+          # Fix the line break used to build the SMS message.
+          text = text.replace("const text = encodeURIComponent(lines.join('\n'));", "const text = encodeURIComponent(lines.join('\\n'));")
+
+          # Use a real first-party cookie only for remembering the notice choice.
+          text = text.replace(
+              "const cookieAccepted = localStorage.getItem('murashkiCookieAccepted');\n    if (!cookieAccepted) {\n      cookieBanner.classList.add('show');\n    }\n    document.getElementById('acceptCookies').addEventListener('click', () => {\n      localStorage.setItem('murashkiCookieAccepted', 'yes');\n      cookieBanner.classList.remove('show');\n    });",
+              "const cookieAccepted = document.cookie.split('; ').some(item => item.startsWith('murashki_cookie_notice='));\n    if (!cookieAccepted) {\n      cookieBanner.classList.add('show');\n    }\n    document.getElementById('acceptCookies').addEventListener('click', () => {\n      document.cookie = 'murashki_cookie_notice=accepted; Max-Age=31536000; Path=/; SameSite=Lax';\n      cookieBanner.classList.remove('show');\n    });"
+          )
+
+          # Load catalog photos only when needed, without changing their source files or quality.
+          for i in range(1, 9):
+              text = text.replace(
+                  f'<img src="/assets/bouquet-{i:02d}.png" alt=',
+                  f'<img loading="lazy" decoding="async" src="/assets/bouquet-{i:02d}.png" alt='
+              )
+          text = text.replace(
+              '<img loading="lazy" decoding="async" src="/assets/bouquet-03.png" alt="Нежный розовый букет Мурашки.flo" />',
+              '<img src="/assets/bouquet-03.png" alt="Нежный розовый букет Мурашки.flo" fetchpriority="high" decoding="async" />'
+          )
+          text = text.replace('loading="lazy" decoding="async" loading="lazy" decoding="async"', 'loading="lazy" decoding="async"')
+          index.write_text(text)
+
+          privacy = Path('privacy.html')
+          p = privacy.read_text()
+          p = p.replace(
+              'В форме обратной связи вы указываете имя, телефон и пожелания по букету. Эти данные нужны только для того, чтобы быстро связаться с вами по вашему запросу и помочь с оформлением заказа.',
+              'Форма помогает собрать ваше сообщение для студии: имя, телефон и пожелания по букету. После нажатия кнопки сообщение открывается в приложении телефона, а сама страница не сохраняет введённые данные в собственной базе.'
+          )
+          p = p.replace(
+              'Cookie помогают сайту запоминать ваши действия и делать следующий визит удобнее. Например, благодаря им не нужно заново скрывать служебное сообщение при каждом открытии страницы.',
+              'Мы используем один небольшой cookie, чтобы запомнить, что вы уже закрыли сообщение об использовании cookie. Он не нужен для рекламы и не содержит имени, телефона или текста вашей заявки.'
+          )
+          p = p.replace(
+              '<li>чтобы ответить на ваш запрос</li>\n          <li>чтобы подсказать по букету, доставке или самовывозу</li>\n          <li>чтобы сделать сайт удобнее при повторном визите</li>',
+              '<li>чтобы подготовить сообщение для обращения в студию</li>\n          <li>чтобы вам не приходилось повторно закрывать уведомление о cookie</li>\n          <li>чтобы пользоваться сайтом с телефона было удобнее</li>'
+          )
+          p = p.replace(
+              '<li>не используем ваши данные для навязчивых рассылок</li>\n          <li>не продаём ваши данные третьим лицам</li>\n          <li>не просим ничего лишнего, если это не нужно для связи</li>',
+              '<li>не сохраняем содержимое формы на сервере этого сайта</li>\n          <li>не используем рекламные cookie и счётчики в этой версии</li>\n          <li>не просим ничего лишнего, если это не нужно для связи со студией</li>'
+          )
+          privacy.write_text(p)
+          PY
+
+      - name: Publish
+        run: |
+          git config user.name 'kava'
+          git config user.email 'yukava25@gmail.com'
+          git add index.html privacy.html
+          git commit -m 'Launch polished Murashki mobile site' || exit 0
+          git push
