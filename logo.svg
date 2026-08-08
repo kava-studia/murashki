@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="120" cy="120" r="117" fill="#D78F9B"/>
+  <circle cx="120" cy="120" r="97" fill="#FFFAF7" stroke="#2B2526" stroke-opacity=".16"/>
+  <g stroke="#2B2526" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M119 112C117 86 122 65 133 45"/>
+    <path d="M106 113C105 89 97 72 84 57"/>
+    <path d="M132 112C134 91 145 75 161 63"/>
+    <path d="M84 57C72 47 72 34 80 28C89 21 101 25 104 35C107 44 101 52 84 57Z" fill="#FFFAF7"/>
+    <path d="M133 45C124 34 125 22 134 16C144 10 156 15 158 26C160 35 151 42 133 45Z" fill="#FFFAF7"/>
+    <path d="M161 63C153 52 155 42 164 36C174 30 185 35 187 45C189 54 180 61 161 63Z" fill="#FFFAF7"/>
+    <path d="M117 88C104 80 94 80 85 84C94 90 104 92 117 88Z"/>
+    <path d="M130 91C142 83 152 82 163 86C154 92 144 94 130 91Z"/>
+  </g>
+  <text x="120" y="143" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="29" letter-spacing="3" fill="#2B2526">МУРАШКИ</text>
+  <text x="120" y="161" text-anchor="middle" font-family="Arial, sans-serif" font-size="7.8" letter-spacing="2.1" fill="#6E6264">БУКЕТЫ · ЦВЕТЫ · ЧУВСТВА</text>
+</svg>
