@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f3e7e7" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Это уже точно тебе 🌷</title>
+  <style>
+    :root{--bg:#f4ece9;--paper:#fffaf8;--ink:#2d2225;--muted:#7d6d72;--rose:#d98c9e;--deep:#9f5266;--sage:#a7b5a3;--line:rgba(45,34,37,.12);--shadow:0 24px 70px rgba(82,52,60,.13)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+    body{overflow-x:hidden}
+    button{font:inherit;color:inherit}
+    .grain{position:fixed;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.14'/%3E%3C/svg%3E")}
+    .app{min-height:100svh;display:grid;place-items:center;padding:max(18px,env(safe-area-inset-top)) 14px max(18px,env(safe-area-inset-bottom));position:relative;overflow:hidden}
+    .blob{position:fixed;border-radius:50%;filter:blur(0);pointer-events:none;opacity:.55}
+    .blob.one{width:280px;height:280px;background:#efc7d0;left:-120px;top:-90px}
+    .blob.two{width:320px;height:320px;background:#c6d0c2;right:-150px;bottom:-140px}
+    .card{width:min(100%,520px);background:rgba(255,250,248,.9);border:1px solid rgba(255,255,255,.9);border-radius:32px;box-shadow:var(--shadow);backdrop-filter:blur(18px);overflow:hidden;position:relative;z-index:2}
+    .screen{display:none;padding:28px 20px}.screen.active{display:block}
+    .eyebrow{font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:9px}.eyebrow:before{content:"";width:26px;height:1px;background:currentColor}
+    h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;margin:0;letter-spacing:-.045em}
+    h1{font-size:clamp(49px,15vw,78px);line-height:.88;margin:20px 0 18px}h1 em{color:var(--deep);font-weight:400}
+    h2{font-size:clamp(42px,12vw,64px);line-height:.92;margin:14px 0 14px}
+    p{color:var(--muted);font-size:14px;line-height:1.7;margin:0}
+    .btn{width:100%;border:0;border-radius:18px;background:var(--ink);color:#fff;padding:15px 18px;font-weight:700;margin-top:22px;cursor:pointer;box-shadow:0 12px 30px rgba(45,34,37,.14);transition:transform .18s ease}.btn:active{transform:scale(.98)}
+    .tiny{font-size:11px;color:#9a8b90;text-align:center;margin-top:12px;line-height:1.5}
+    .oops{display:inline-flex;align-items:center;gap:7px;margin-top:14px;background:rgba(217,140,158,.12);color:var(--deep);border-radius:999px;padding:9px 12px;font-size:11px;font-weight:700}
+
+    .game-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.counter{text-align:right}.counter strong{display:block;font-family:Georgia,serif;font-size:36px;font-weight:400;line-height:1}.counter span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .garden{height:min(56vh,430px);min-height:340px;margin-top:18px;border-radius:28px;position:relative;overflow:hidden;background:linear-gradient(160deg,#f1d8dc 0%,#ead7d5 48%,#d8ded2 100%);border:1px solid rgba(255,255,255,.72);box-shadow:inset 0 0 60px rgba(255,255,255,.3)}
+    .garden:before,.garden:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.28)}.garden:before{width:180px;height:180px;left:-70px;top:-70px}.garden:after{width:230px;height:230px;right:-100px;bottom:-100px}
+    .target{position:absolute;width:72px;height:72px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;transform:translate(-50%,-50%);animation:pop .26s ease both;z-index:4}
+    .target .bug{width:48px;height:48px;border-radius:50% 50% 46% 54%;background:rgba(255,250,248,.96);box-shadow:0 12px 22px rgba(70,45,51,.14);display:grid;place-items:center;font-size:25px;position:relative;border:1px solid rgba(255,255,255,.8)}
+    .target .bug:after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--rose);right:2px;top:4px}
+    @keyframes pop{from{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(-18deg)}to{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}}
+    .tap-hint{text-align:center;margin-top:12px;font-size:12px;color:var(--muted)}
+    .spark{position:absolute;font-size:18px;pointer-events:none;animation:fly .75s ease-out forwards;z-index:9}@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+
+    .final-art{height:250px;margin:-28px -20px 22px;position:relative;overflow:hidden;background:linear-gradient(150deg,#d98699,#e8aeb9 55%,#b6c2af)}
+    .stem{position:absolute;width:2px;background:#35473b;transform-origin:bottom;border-radius:3px;bottom:-8px}.stem.s1{height:190px;left:45%;transform:rotate(-8deg)}.stem.s2{height:175px;left:55%;transform:rotate(7deg)}.stem.s3{height:155px;left:36%;transform:rotate(-19deg)}.stem.s4{height:150px;left:64%;transform:rotate(18deg)}
+    .flower{position:absolute;width:72px;height:72px;border-radius:50%;background:#fff8f5;box-shadow:30px 3px 0 rgba(255,248,245,.88),15px 27px 0 rgba(255,248,245,.76),-14px 25px 0 rgba(255,248,245,.68),-24px -2px 0 rgba(255,248,245,.76);transform:translate(-50%,-50%) scale(.7)}
+    .flower:after{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:#c36b7f;left:24px;top:24px}.f1{left:46%;top:22%}.f2{left:59%;top:34%;transform:translate(-50%,-50%) scale(.56)}.f3{left:33%;top:42%;transform:translate(-50%,-50%) scale(.5)}
+    .seal{position:absolute;right:16px;bottom:16px;width:94px;height:94px;border-radius:50%;background:rgba(255,250,248,.9);display:grid;place-items:center;text-align:center;font-family:Georgia,serif;font-size:14px;line-height:1.05;transform:rotate(7deg);box-shadow:0 12px 30px rgba(60,35,42,.12)}
+    .final-copy{font-size:15px;line-height:1.75;color:var(--muted)}
+    .question{margin-top:18px;border-top:1px solid var(--line);padding-top:17px;font-family:Georgia,serif;font-size:25px;line-height:1.1}
+    .choice-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.choice{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px 8px;font-weight:700;cursor:pointer}.choice.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .reaction{display:none;margin-top:12px;background:rgba(167,181,163,.18);border-radius:15px;padding:12px 13px;color:var(--ink);font-size:12px;line-height:1.55}.reaction.show{display:block}
+
+    @media(min-width:600px){.screen{padding:36px 32px}.final-art{margin:-36px -32px 26px}.garden{height:430px}.card{border-radius:38px}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div class="grain"></div><div class="blob one"></div><div class="blob two"></div>
+  <main class="app">
+    <div class="card">
+      <section class="screen active" id="intro">
+        <div class="eyebrow">корректировка утреннего подарка</div>
+        <h1>Я немного<br><em>дятел.</em></h1>
+        <p>Сайт у вас, оказывается, уже есть. Этот важный факт я героически выяснил уже после того, как сделал ещё один 😄</p>
+        <div class="oops">поэтому исправляюсь</div>
+        <p style="margin-top:14px">Теперь сделал штуку, которая точно не для студии. Она просто для тебя.</p>
+        <button class="btn" id="startBtn">Окей, что там? 🌷</button>
+        <div class="tiny">занимает примерно полминуты · лучше с телефона</div>
+      </section>
+
+      <section class="screen" id="game">
+        <div class="game-head">
+          <div><div class="eyebrow">мини миссия</div><h2>Поймай<br>7 мурашек</h2><p>Они немного стеснительные и постоянно убегают.</p></div>
+          <div class="counter"><strong id="count">0/7</strong><span>поймано</span></div>
+        </div>
+        <div class="garden" id="garden" aria-label="Игровое поле"></div>
+        <div class="tap-hint">Нажимай на появляющуюся мурашку ✨</div>
+      </section>
+
+      <section class="screen" id="final">
+        <div class="final-art" aria-hidden="true">
+          <div class="stem s1"></div><div class="stem s2"></div><div class="stem s3"></div><div class="stem s4"></div>
+          <div class="flower f1"></div><div class="flower f2"></div><div class="flower f3"></div>
+          <div class="seal">теперь<br>точно<br>тебе 🌷</div>
+        </div>
+        <div class="eyebrow">миссия выполнена</div>
+        <h2 style="margin-top:14px">Доброе утро<br>ещё раз)</h2>
+        <p class="final-copy">Без сайтов для бизнеса, без коммерческих предложений и без хитрого маркетинга. Просто хотел сделать тебе необычный маленький знак внимания и, в идеале, вызвать улыбку.</p>
+        <div class="question">Ну что, хоть немного получилось? 😄</div>
+        <div class="choice-row">
+          <button class="choice primary" data-answer="yes">Да 🌷</button>
+          <button class="choice" data-answer="almost">Почти 😄</button>
+        </div>
+        <div class="reaction" id="reaction"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const intro=document.getElementById('intro'),game=document.getElementById('game'),final=document.getElementById('final');
+    const garden=document.getElementById('garden'),countEl=document.getElementById('count');
+    let count=0,current=null;
+    function show(el){[intro,game,final].forEach(x=>x.classList.remove('active'));el.classList.add('active')}
+    function spawn(){
+      if(current) current.remove();
+      const b=document.createElement('button');b.className='target';b.setAttribute('aria-label','Поймать мурашку');
+      const pad=46;const w=garden.clientWidth,h=garden.clientHeight;
+      const x=pad+Math.random()*(w-pad*2),y=pad+Math.random()*(h-pad*2);
+      b.style.left=x+'px';b.style.top=y+'px';b.innerHTML='<span class="bug">🌷</span>';
+      b.addEventListener('click',()=>catchBug(b));garden.appendChild(b);current=b;
+    }
+    function sparks(x,y){
+      ['✨','🌸','·','♡','✦'].forEach((s,i)=>{const e=document.createElement('span');e.className='spark';e.textContent=s;e.style.left=x+'px';e.style.top=y+'px';e.style.setProperty('--x',((Math.random()-.5)*110)+'px');e.style.setProperty('--y',(-30-Math.random()*80)+'px');e.style.setProperty('--r',((Math.random()-.5)*140)+'deg');garden.appendChild(e);setTimeout(()=>e.remove(),800)})
+    }
+    function catchBug(b){
+      const r=b.getBoundingClientRect(),g=garden.getBoundingClientRect();sparks(r.left-g.left+36,r.top-g.top+36);count++;countEl.textContent=count+'/7';b.remove();current=null;
+      if(navigator.vibrate) navigator.vibrate(18);
+      if(count>=7){setTimeout(()=>show(final),500)}else{setTimeout(spawn,220)}
+    }
+    document.getElementById('startBtn').addEventListener('click',()=>{show(game);requestAnimationFrame(spawn)});
+    document.querySelectorAll('.choice').forEach(btn=>btn.addEventListener('click',()=>{
+      const reaction=document.getElementById('reaction');reaction.classList.add('show');
+      reaction.textContent=btn.dataset.answer==='yes'?'Тогда всё, утро спасено 😄 Хорошего тебе дня 🌷':'Ладно, принимается 😄 У меня хотя бы появился повод когда-нибудь сделать вторую попытку.';
+      document.querySelectorAll('.choice').forEach(x=>x.disabled=true);
+    }));
+  </script>
+</body>
+</html>
