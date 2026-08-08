@@ -1,0 +1,55 @@
+name: Sync original Murashki photos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-murashki-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download original photos without resizing or recompression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl -L --fail --retry 3 'https://at.adobe.com/6Iauq4HcdyjMsTrG' -o assets/bouquet-01.png
+          curl -L --fail --retry 3 'https://at.adobe.com/KNSMeh87Y5F3jy7x' -o assets/bouquet-02.png
+          curl -L --fail --retry 3 'https://at.adobe.com/nChUT8WJPnQZR4QD' -o assets/bouquet-03.png
+          curl -L --fail --retry 3 'https://at.adobe.com/t8fzK2kCscojMPjm' -o assets/bouquet-04.png
+          curl -L --fail --retry 3 'https://at.adobe.com/nWkBtiMkBjbww5I0' -o assets/bouquet-05.png
+          curl -L --fail --retry 3 'https://at.adobe.com/rvVk0ZOgRLs67zwd' -o assets/bouquet-06.png
+          curl -L --fail --retry 3 'https://at.adobe.com/N0DcjNtsvuYDib07' -o assets/bouquet-07.png
+          curl -L --fail --retry 3 'https://at.adobe.com/2fFxZhXNYPobZcCV' -o assets/bouquet-08.png
+          test $(stat -c%s assets/bouquet-01.png) -gt 600000
+          test $(stat -c%s assets/bouquet-02.png) -gt 400000
+          test $(stat -c%s assets/bouquet-03.png) -gt 600000
+          test $(stat -c%s assets/bouquet-04.png) -gt 600000
+          test $(stat -c%s assets/bouquet-05.png) -gt 400000
+          test $(stat -c%s assets/bouquet-06.png) -gt 400000
+          test $(stat -c%s assets/bouquet-07.png) -gt 250000
+          test $(stat -c%s assets/bouquet-08.png) -gt 450000
+
+      - name: Commit photos
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'kava-studia-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add assets/bouquet-*.png
+          if git diff --cached --quiet; then
+            echo 'Photos already match originals.'
+          else
+            git commit -m 'Add original full-quality Murashki photos'
+            git push origin HEAD:main
+          fi
